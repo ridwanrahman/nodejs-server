@@ -20,20 +20,23 @@ let createMap = () => {
                 this.map[ res[i]['afbeelding']]=res[i]['3Dobject'];
             }
         }
-        console.log(this.map);
     });
 }
-let getAllProducts = (response) => {
+let getAllProducts = (response, filter) => {
+    console.log(filter)
+    if (filter=='dubbelGraf') { this.category = "DG" }
     request('http://www.gedenktekenoutlet.nl/configurator/phpcore/product/getAll.php', {json: true}, (err, res, body) => {
         if(err) { return console.log(err); }
         res = res.body;
         res.shift()
-        this.map = {};
-        
-        this.map = res
-        console.log(this.map.length)
+        this.map = [];
+        let len = res.length;
+        for (let i=0;i<len;i++){
+            if(res[i]['afbeelding'].slice(0,2) == this.category) {
+                this.map.push(res[i])
+            }
+        };
         response.send(this.map);
-
     });
 };
 let getjpg = (response, fileName) => {
@@ -57,8 +60,8 @@ app.listen(port, () => {
 
 });
 
-app.get('/get-all-products', (req, res) => {
-    getAllProducts(res);
+app.get('/get-all-products/:filter', (req, res) => {
+    getAllProducts(res, req.params['filter']);
 });
 app.get('/get-jpg/:fileName', cors(), (req, res) => {
     getjpg(res,req.params['fileName']);
@@ -66,11 +69,3 @@ app.get('/get-jpg/:fileName', cors(), (req, res) => {
 app.get('/get-3dobject/:fileName', cors(), (req, res) => {
     get3dObject(res, req.params['fileName']);
 })
-
-// app.get('/static', (req, res)=>{
-//     console.log(path.join(__dirname+'/../../../srv1.nightcity.nl/configurator/3Dobjecten'))
-// })
-
-// app.get('/get-map', (req, res) => {
-//     res.end( JSON.stringify(this.map) );
-// });
