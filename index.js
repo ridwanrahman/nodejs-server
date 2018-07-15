@@ -23,8 +23,11 @@ let createMap = () => {
     });
 }
 let getAllProducts = (response, filter) => {
-    console.log(filter)
     if (filter=='dubbelGraf') { this.category = "DG" }
+    if (filter=='dubbeleZerken') { this.category = "DZ" }
+    if (filter=='enkelGraf') { this.category = "EG" }
+    if (filter=='enkeleZerken') { this.category = "EZ" }
+    if (filter=='staandeGedenkstenen') { this.category = "SG" }
     request('http://www.gedenktekenoutlet.nl/configurator/phpcore/product/getAll.php', {json: true}, (err, res, body) => {
         if(err) { return console.log(err); }
         res = res.body;
@@ -54,10 +57,33 @@ let get3dObject = (response, fileName) => {
         response.send(buffer);
     })
 };
+let getColors = (response) => {
+    let url = ''
+    request('http://www.gedenktekenoutlet.nl/configurator/phpcore/kleuren/getAll.php',{json: true}, (err, res, body) => {
+        if(err) {return console.log(err) };
+        res = res.body;
+        // this.map = [];
+        // for (let i=0;i<res.length;i++){
+        //     this.map.push({
+        //         name: res[i]['naam'],
+        //         url:"http://www.gedenktekenoutlet.nl/configurator/kleuren/s/"+res[i]['afbeelding']
+        //     })
+        // }
+        response.send(res);
+    });
+};
+let getSpecificColor = (response, fileName) => {
+    let url="http://www.gedenktekenoutlet.nl/configurator/kleuren/s/"+fileName;
+    request({url, encoding: null}, (err, res, buffer) => {
+        if (err) { return console.log(err) };
+        response.send(buffer);
+    })
+
+};
 
 app.listen(port, () => {
     // createMap();
-
+    // getColors();
 });
 
 app.get('/get-all-products/:filter', (req, res) => {
@@ -68,4 +94,10 @@ app.get('/get-jpg/:fileName', cors(), (req, res) => {
 });
 app.get('/get-3dobject/:fileName', cors(), (req, res) => {
     get3dObject(res, req.params['fileName']);
+});
+app.get('/get-colors', (req, res) => {
+    getColors(res);
+});
+app.get('/get-specific-color/:fileName', cors(),(req, res) => {
+    getSpecificColor(res, req.params['fileName']);
 })
