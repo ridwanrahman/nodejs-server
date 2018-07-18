@@ -76,10 +76,34 @@ let getSpecificColor = (response, fileName) => {
     let url="http://www.gedenktekenoutlet.nl/configurator/kleuren/s/"+fileName;
     request({url, encoding: null}, (err, res, buffer) => {
         if (err) { return console.log(err) };
+        response.set("Content-Type", "image/jpeg");
         response.send(buffer);
     })
 
 };
+let getAllLetterPlates = (response) => {
+    request('http://www.gedenktekenoutlet.nl/configurator/phpcore/letterplaat/getAll.php', {json:true}, (err, res, body) => {
+        if(err) { return console.log(err) };
+        res = res.body;
+        response.send(res);
+    });
+};
+let getSpecificLetterPlate = (response, fileName) => {
+    let url="http://www.gedenktekenoutlet.nl/configurator/letterplaten/m/"+fileName;
+    request({url, encoding: null},(err, res, buffer) => {
+        if (err) {return console.log(err) };
+        response.set("Content-Type", "image/jpeg");
+        response.send(buffer);
+    });
+};
+let getSpecificLetterPlate3dobject = (response, fileName) => {
+    let url = "http://www.gedenktekenoutlet.nl/configurator/3Dobjecten/"+fileName;
+    request({url, encoding:null}, (err, res, buffer) => {
+        if (err) { return console.log(err) };
+        response.send(buffer);
+
+    });
+}
 
 app.listen(port, () => {
     // createMap();
@@ -100,4 +124,15 @@ app.get('/get-colors', (req, res) => {
 });
 app.get('/get-specific-color/:fileName', cors(),(req, res) => {
     getSpecificColor(res, req.params['fileName']);
+});
+
+app.get('/get-all-letter-plates', (req, res) => {
+    getAllLetterPlates(res);
+});
+app.get('/get-specific-letter-plate/:fileName', cors(), (req,res)=>{
+    getSpecificLetterPlate(res, req.params['fileName']);
+});
+app.get('/get-specific-letter-plate-3dobject/:fileName', cors(), (req,res) => {
+    getSpecificLetterPlate3dobject(res, req.params['fileName']);
 })
+
