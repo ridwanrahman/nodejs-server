@@ -73,7 +73,7 @@ let getColors = (response) => {
     });
 };
 let getSpecificColor = (response, fileName) => {
-    let url="http://www.gedenktekenoutlet.nl/configurator/kleuren/s/"+fileName;
+    let url="http://www.gedenktekenoutlet.nl/configurator/kleuren/o/"+fileName;
     request({url, encoding: null}, (err, res, buffer) => {
         if (err) { return console.log(err) };
         response.set("Content-Type", "image/jpeg");
@@ -134,5 +134,6 @@ app.get('/get-specific-letter-plate/:fileName', cors(), (req,res)=>{
 });
 app.get('/get-specific-letter-plate-3dobject/:fileName', cors(), (req,res) => {
     getSpecificLetterPlate3dobject(res, req.params['fileName']);
-})
+});
+
 
