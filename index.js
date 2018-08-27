@@ -103,6 +103,20 @@ let getSpecificLetterPlate3dobject = (response, fileName) => {
         response.send(buffer);
 
     });
+};
+let getAllOrnaments = (response) => {
+    request('http://www.gedenktekenoutlet.nl/configurator/phpcore/ornament/getAll.php', {json:true}, (err, res, body) => {
+        if(err) { return console.log(err) };
+        res = res.body;
+        response.send(res);
+    })
+};
+let getSpecificOrnament = (response, fileName) => {
+    let url = "http://www.gedenktekenoutlet.nl/configurator/ornament/"+fileName;
+    request({url, encoding:null}, (err, res, buffer) => {
+        if(err) { return console.log(err) };
+        response.send(buffer);
+    })
 }
 
 app.listen(port, () => {
@@ -135,5 +149,11 @@ app.get('/get-specific-letter-plate/:fileName', cors(), (req,res)=>{
 app.get('/get-specific-letter-plate-3dobject/:fileName', cors(), (req,res) => {
     getSpecificLetterPlate3dobject(res, req.params['fileName']);
 });
+app.get('/get-all-ornaments', (req, res) => {
+    getAllOrnaments(res)
+})
+app.get('/get-specific-ornament/:fileName', cors(), (req, res) => {
+    getSpecificOrnament(res, req.params['fileName']);
+})
 
 
