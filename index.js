@@ -115,9 +115,40 @@ let getSpecificOrnament = (response, fileName) => {
     let url = "http://www.gedenktekenoutlet.nl/configurator/ornament/"+fileName;
     request({url, encoding:null}, (err, res, buffer) => {
         if(err) { return console.log(err) };
+        response.setHeader('Content-Type', 'image/svg+xml');
         response.send(buffer);
     })
+};
+let getAccessoryCategories = (response) => {
+    request('http://www.gedenktekenoutlet.nl/configurator/phpcore/accessoirescat/getAll.php', {json:true}, (err, res, body) => {
+        if (err) { return console.log(err) };
+        res = res.body;
+        response.send(res);
+    })
+};
+let getSpecificAccessoryCategory = (response, fileName) => {
+    request('http://www.gedenktekenoutlet.nl/configurator/phpcore/accessoires/getAll.php', {json:true}, (err, res, body) => {
+        if (err) { return console.log(err) };
+        res = res.body
+        final_res = []
+        console.log(res);
+        for (var i=0;i<res.length;i++){
+            if (res[i]['categorie'] == fileName) {
+                final_res.push(res[i])
+            }
+        }
+        response.send(final_res)
+    })
+    
 }
+let getAccessoryImage = (response, fileName) => {
+    let url = 'http://www.gedenktekenoutlet.nl/configurator/accessoires/m/' + fileName;
+    request({url, encoding:null}, (err, res, buffer) => {
+        if (err) { return console.log(err) };
+        response.set("Content-Type", "image/jpeg");
+        response.send(buffer);
+    })
+};
 
 app.listen(port, () => {
     // createMap();
@@ -139,7 +170,6 @@ app.get('/get-colors', (req, res) => {
 app.get('/get-specific-color/:fileName', cors(),(req, res) => {
     getSpecificColor(res, req.params['fileName']);
 });
-
 app.get('/get-all-letter-plates', (req, res) => {
     getAllLetterPlates(res);
 });
@@ -151,9 +181,18 @@ app.get('/get-specific-letter-plate-3dobject/:fileName', cors(), (req,res) => {
 });
 app.get('/get-all-ornaments', (req, res) => {
     getAllOrnaments(res)
-})
+});
 app.get('/get-specific-ornament/:fileName', cors(), (req, res) => {
     getSpecificOrnament(res, req.params['fileName']);
+});
+app.get('/get-accessory-categories', (req, res) => {
+    getAccessoryCategories(res);
+});
+app.get('/get-specific-accessory-category/:fileName', (req, res) => {
+    getSpecificAccessoryCategory(res, req.params['fileName']);
+});
+app.get('/get-accesory-image/:fileName', cors(), (req, res) => {
+    getAccessoryImage(res, req.params['fileName']);
 })
 
 
