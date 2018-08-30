@@ -149,6 +149,14 @@ let getAccessoryImage = (response, fileName) => {
         response.send(buffer);
     })
 };
+let getSpecificAccessory = (response, fileName) => {
+    let url = 'http://www.gedenktekenoutlet.nl/configurator/accessoires/l/'+fileName;
+    request({url, encoding:null}, (err, res, buffer) => {
+        if (err) { return console.log(err) };
+        response.set("Content-Type", "image/jpeg");
+        response.send(buffer);
+    })
+}
 
 app.listen(port, () => {
     // createMap();
@@ -193,6 +201,9 @@ app.get('/get-specific-accessory-category/:fileName', (req, res) => {
 });
 app.get('/get-accesory-image/:fileName', cors(), (req, res) => {
     getAccessoryImage(res, req.params['fileName']);
+});
+app.get('/get-specific-accessory/:fileName', cors(), (req,res) => {
+    getSpecificAccessory(res, req.params['fileName'])
 })
 
 
