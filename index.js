@@ -3,6 +3,13 @@ let cors = require('cors');
 const http = require('http');
 const request = require('request');
 app = express();
+
+var bodyParser = require('body-parser');
+require('body-parser-xml')(bodyParser);
+app.use(bodyParser.xml());
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+
 port = process.env.PORT || 3000;
 let path = require('path');
 let public = path.join(__dirname, 'public');
@@ -204,6 +211,12 @@ app.get('/get-accesory-image/:fileName', cors(), (req, res) => {
 });
 app.get('/get-specific-accessory/:fileName', cors(), (req,res) => {
     getSpecificAccessory(res, req.params['fileName'])
+})
+app.post('/print-xml', (req, res, body) => {
+    console.log("asldkjfklj");
+    // console.log(req)
+    console.log(req.body)
+    res.status(200).end();
 })
 
 
