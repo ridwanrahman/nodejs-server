@@ -108,7 +108,6 @@ let getSpecificLetterPlate3dobject = (response, fileName) => {
     request({url, encoding:null}, (err, res, buffer) => {
         if (err) { return console.log(err) };
         response.send(buffer);
-
     });
 };
 let getAllOrnaments = (response) => {
@@ -138,7 +137,6 @@ let getSpecificAccessoryCategory = (response, fileName) => {
         if (err) { return console.log(err) };
         res = res.body
         final_res = []
-        console.log(res);
         for (var i=0;i<res.length;i++){
             if (res[i]['categorie'] == fileName) {
                 final_res.push(res[i])
@@ -216,6 +214,17 @@ app.post('/print-xml', (req, res, body) => {
     console.log("asldkjfklj");
     // console.log(req)
     console.log(req.body)
+    request({
+        url: 'http://www.gedenktekenoutlet.nl/configurator/phpcore/xml.php?actie=save',
+        method: 'POST',
+        json: true,
+        headers:{ 
+            "Content-Type": "text/xml"
+        },
+        body: req.body
+    }, function(error, response, body){
+        console.log(response.body);
+    })
     res.status(200).end();
 })
 
