@@ -2,6 +2,9 @@ let express = require('express');
 let cors = require('cors');
 const http = require('http');
 const request = require('request');
+
+const axios = require('axios');
+
 app = express();
 
 var bodyParser = require('body-parser');
@@ -210,22 +213,25 @@ app.get('/get-accesory-image/:fileName', cors(), (req, res) => {
 app.get('/get-specific-accessory/:fileName', cors(), (req,res) => {
     getSpecificAccessory(res, req.params['fileName'])
 })
+
 app.post('/print-xml', (req, res, body) => {
-    console.log("asldkjfklj");
-    // console.log(req)
-    console.log(req.body)
-    request({
-        url: 'http://www.gedenktekenoutlet.nl/configurator/phpcore/xml.php?actie=save',
+    console.log("sending data to client server");
+    console.log(req.body);
+    axios({
         method: 'POST',
-        json: true,
-        headers:{ 
-            "Content-Type": "text/xml"
-        },
-        body: req.body
-    }, function(error, response, body){
-        console.log(response.body);
+        headers: { 'content-type': 'application/x-www-form-urlencoded; charset=utf-8' },
+        url: 'http://www.gedenktekenoutlet.nl/configurator/phpcore/xml.php?actie=save',
+        data: req.body,
+    
     })
+    .then(function (response) {
+        console.log("response")
+        console.log(response)
+      })
+      .catch(function(error){
+        console.log("error")
+        console.log(error)
+      })
+
     res.status(200).end();
 })
-
-
