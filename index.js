@@ -5,6 +5,8 @@ const request = require('request');
 
 const axios = require('axios');
 
+var querystring = require('querystring');
+
 app = express();
 
 var bodyParser = require('body-parser');
@@ -216,22 +218,42 @@ app.get('/get-specific-accessory/:fileName', cors(), (req,res) => {
 
 app.post('/print-xml', (req, res, body) => {
     console.log("sending data to client server");
-    console.log(req.body);
-    axios({
-        method: 'POST',
-        headers: { 'content-type': 'application/x-www-form-urlencoded; charset=utf-8' },
-        url: 'http://www.gedenktekenoutlet.nl/configurator/phpcore/xml.php?actie=save',
-        data: req.body,
+    // console.log(req.body);    
+    console.log(req.body['inscriptions']);
+    // axios({
+    //     method: 'POST',
+    //     headers: { 'content-type': 'application/x-www-form-urlencoded; charset=utf-8' },
+    //     url: 'http://www.gedenktekenoutlet.nl/configurator/phpcore/xml.php?actie=save',
+    //     data: req.body,
     
-    })
-    .then(function (response) {
-        console.log("response")
-        console.log(response)
-      })
-      .catch(function(error){
-        console.log("error")
-        console.log(error)
-      })
+    // })
+    // .then(function (response) {
+    //     console.log("response")
+    //     console.log(response)
+    //   })
+    //   .catch(function(error){
+    //     console.log("error")
+    //     console.log(error)
+    //   })
+
+    axios.post('http://www.gedenktekenoutlet.nl/configurator/phpcore/xml.php?actie=save',
+        querystring.stringify({
+                postcode: req.body['postcode'], //gave the values directly for testing
+                naam: req.body['naam'],
+                plaats: req.body['plaats'],
+                telefoonnummer: req.body['telefoonnummer'],                
+                email: req.body['email'],
+                // xml: "<userdata><plint>Ja</plint><textures><banden>African Red</banden><tussenstrook>African Red</tussenstrook><letterplaat>African Red</letterplaat><plinten>African Red</plinten><dekplaat>African Red</dekplaat></textures><plintkorting>350</plintkorting><tekstkleur>Goud</tekstkleur><letterplaat>LP01</letterplaat><schrift>null</schrift><grafprijs>2600</grafprijs><letterplaatid>3</letterplaatid><ornament/><graf>18</graf><teksten/><accessoires/><grafnaam>DG-01</grafnaam><tekens>null</tekens><lettertype>null</lettertype></userdata>"
+                xml: "<userdata><plint>Ja</plint><grafnaam>"+req.body['grafnaam']+"</grafnaam><graf>"+req.body['graf']+"</graf><grafprijs>"+req.body['grafprijs']+"</grafprijs><textures>"+req.body['textures']+"</textures><letterplaat>"+req.body['letterplaat']+"</letterplaat><letterplaatid>"+req.body['letterplaatid']+"</letterplaatid><schrift>null</schrift><tekens>"+req.body['inscriptions']+"</tekens><lettertype>null</lettertype><accessoires>"+req.body['accessoires']+"</accessoires></userdata>"
+                
+        }), {
+          headers: { 
+            "Content-Type": "application/x-www-form-urlencoded"
+          }
+        }).then(function(response) {
+            console.log("done");
+            console.log(response);
+        });
 
     res.status(200).end();
 })
