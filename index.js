@@ -241,19 +241,20 @@ app.post('/print-xml', (req, res, body) => {
                 postcode: req.body['postcode'], //gave the values directly for testing
                 naam: req.body['naam'],
                 plaats: req.body['plaats'],
-                telefoonnummer: req.body['telefoonnummer'],                
+                telefoonnummer: req.body['telefoonnummer'],
                 email: req.body['email'],
                 // xml: "<userdata><plint>Ja</plint><textures><banden>African Red</banden><tussenstrook>African Red</tussenstrook><letterplaat>African Red</letterplaat><plinten>African Red</plinten><dekplaat>African Red</dekplaat></textures><plintkorting>350</plintkorting><tekstkleur>Goud</tekstkleur><letterplaat>LP01</letterplaat><schrift>null</schrift><grafprijs>2600</grafprijs><letterplaatid>3</letterplaatid><ornament/><graf>18</graf><teksten/><accessoires/><grafnaam>DG-01</grafnaam><tekens>null</tekens><lettertype>null</lettertype></userdata>"
                 xml: "<userdata><plint>Ja</plint><grafnaam>"+req.body['grafnaam']+"</grafnaam><graf>"+req.body['graf']+"</graf><grafprijs>"+req.body['grafprijs']+"</grafprijs><textures>"+req.body['textures']+"</textures><letterplaat>"+req.body['letterplaat']+"</letterplaat><letterplaatid>"+req.body['letterplaatid']+"</letterplaatid><schrift>null</schrift><tekens>"+req.body['inscriptions']+"</tekens><lettertype>null</lettertype><accessoires>"+req.body['accessoires']+"</accessoires></userdata>"
                 
         }), {
-          headers: { 
+          headers: {
             "Content-Type": "application/x-www-form-urlencoded"
           }
         }).then(function(response) {
             console.log("done");
-            console.log(response);
+            
+            res.json({ message: 'Request received!' })
         });
 
-    res.status(200).end();
+    
 })
