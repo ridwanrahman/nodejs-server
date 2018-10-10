@@ -12,8 +12,13 @@ app = express();
 var bodyParser = require('body-parser');
 require('body-parser-xml')(bodyParser);
 app.use(bodyParser.xml());
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+// app.use(bodyParser.json());
+// app.use(bodyParser.urlencoded({ extended: true }));
+
+app.use(bodyParser.json({limit: "50mb"}));
+app.use(bodyParser.urlencoded({limit: "50mb", extended: true}));
+
+var parseString = require('xml2js').parseString;
 
 port = process.env.PORT || 3000;
 let path = require('path');
@@ -219,7 +224,6 @@ app.get('/get-specific-accessory/:fileName', cors(), (req,res) => {
 app.post('/print-xml', (req, res, body) => {
     console.log("sending data to client server");
     // console.log(req.body);    
-    console.log(req.body['inscriptions']);
     // axios({
     //     method: 'POST',
     //     headers: { 'content-type': 'application/x-www-form-urlencoded; charset=utf-8' },
@@ -250,11 +254,27 @@ app.post('/print-xml', (req, res, body) => {
           headers: {
             "Content-Type": "application/x-www-form-urlencoded"
           }
-        }).then(function(response) {
-            console.log("done");
-            
-            res.json({ message: 'Request received!' })
+        }).then(function(response) {            
+            var xml = response['data']
+            var key;
+            parseString(xml, function (err, result) {                                
+                key = result['result']['key'][0]
+            });            
+            res.json({ message: 'Request received!,', 'key': key })
         });
+})
 
-    
+app.post('/send-screenshot', (req, res, body) => {        
+    axios.post('http://www.gedenktekenoutlet.nl/configurator/phpcore/images.php',
+    querystring.stringify({
+            img: req.body['img'],
+            key: req.body['key'],
+            nr: req.body['nr']
+    }), {
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded"
+      }
+    }).then(function(response) {        
+        res.json({ message: 'Request received!' })
+    });        
 })
