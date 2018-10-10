@@ -223,23 +223,6 @@ app.get('/get-specific-accessory/:fileName', cors(), (req,res) => {
 
 app.post('/print-xml', (req, res, body) => {
     console.log("sending data to client server");
-    // console.log(req.body);    
-    // axios({
-    //     method: 'POST',
-    //     headers: { 'content-type': 'application/x-www-form-urlencoded; charset=utf-8' },
-    //     url: 'http://www.gedenktekenoutlet.nl/configurator/phpcore/xml.php?actie=save',
-    //     data: req.body,
-    
-    // })
-    // .then(function (response) {
-    //     console.log("response")
-    //     console.log(response)
-    //   })
-    //   .catch(function(error){
-    //     console.log("error")
-    //     console.log(error)
-    //   })
-
     axios.post('http://www.gedenktekenoutlet.nl/configurator/phpcore/xml.php?actie=save',
         querystring.stringify({
                 postcode: req.body['postcode'], //gave the values directly for testing
@@ -259,12 +242,17 @@ app.post('/print-xml', (req, res, body) => {
             var key;
             parseString(xml, function (err, result) {                                
                 key = result['result']['key'][0]
-            });            
+            });
+            console.log("SENDING BACK KEY FOR IMAGE")
             res.json({ message: 'Request received!,', 'key': key })
         });
 })
 
-app.post('/send-screenshot', (req, res, body) => {        
+app.post('/send-screenshot', (req, res, body) => {
+    console.log("SENDING SCREENSHOT")
+    console.log(req.body['img'])
+    console.log(req.body['key'])
+    console.log(req.body['nr'])
     axios.post('http://www.gedenktekenoutlet.nl/configurator/phpcore/images.php',
     querystring.stringify({
             img: req.body['img'],
@@ -276,5 +264,5 @@ app.post('/send-screenshot', (req, res, body) => {
       }
     }).then(function(response) {        
         res.json({ message: 'Request received!' })
-    });        
+    });
 })
