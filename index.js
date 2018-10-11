@@ -12,8 +12,6 @@ app = express();
 var bodyParser = require('body-parser');
 require('body-parser-xml')(bodyParser);
 app.use(bodyParser.xml());
-// app.use(bodyParser.json());
-// app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(bodyParser.json({limit: "50mb"}));
 app.use(bodyParser.urlencoded({limit: "50mb", extended: true}));
@@ -222,10 +220,12 @@ app.get('/get-specific-accessory/:fileName', cors(), (req,res) => {
 })
 
 app.post('/print-xml', (req, res, body) => {
-    console.log("sending data to client server");
+    console.log("sending data to client server");        
     axios.post('http://www.gedenktekenoutlet.nl/configurator/phpcore/xml.php?actie=save',
+
         querystring.stringify({
                 postcode: req.body['postcode'], //gave the values directly for testing
+                adres: req.body['adres'],
                 naam: req.body['naam'],
                 plaats: req.body['plaats'],
                 telefoonnummer: req.body['telefoonnummer'],
@@ -240,7 +240,7 @@ app.post('/print-xml', (req, res, body) => {
         }).then(function(response) {            
             var xml = response['data']
             var key;
-            parseString(xml, function (err, result) {                                
+            parseString(xml, function (err, result) {
                 key = result['result']['key'][0]
             });
             console.log("SENDING BACK KEY FOR IMAGE")
@@ -249,10 +249,7 @@ app.post('/print-xml', (req, res, body) => {
 })
 
 app.post('/send-screenshot', (req, res, body) => {
-    console.log("SENDING SCREENSHOT")
-    console.log(req.body['img'])
-    console.log(req.body['key'])
-    console.log(req.body['nr'])
+    console.log("SENDING SCREENSHOT")    
     axios.post('http://www.gedenktekenoutlet.nl/configurator/phpcore/images.php',
     querystring.stringify({
             img: req.body['img'],
